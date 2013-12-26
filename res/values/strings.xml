@@ -36,4 +36,5 @@
 	
 	<string name="title_disconnected">Disconnected</string>
 	<string name="title_connecting">Connecting&#8230;</string>
+	<string name="title_imageerror">Error on preparing images</string>
 </resources>

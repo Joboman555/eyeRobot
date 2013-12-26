@@ -13,6 +13,7 @@ import org.apache.http.params.HttpParams;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,8 @@ public class MjpegActivity extends Activity {
     private String ip_command = "?action=stream";
     
     private boolean suspending = false;
+    
+	final Handler handler = new Handler();
  
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,6 +190,15 @@ public class MjpegActivity extends Activity {
     	}
     }
 
+    public void setImageError(){
+    	handler.post(new Runnable() {
+    		@Override
+    		public void run() {
+    			setTitle(R.string.title_imageerror);
+    			return;
+    		}
+    	});
+    }
     
     public class DoRead extends AsyncTask<String, Void, MjpegInputStream> {
         protected MjpegInputStream doInBackground(String... url) {

@@ -27,4 +27,5 @@
 	
 	<string name="title_disconnected">接続なし</string>
 	<string name="title_connecting">接続中&#8230;</string>
+	<string name="title_imageerror">画像エラー</string>
 </resources>
