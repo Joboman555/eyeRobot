@@ -24,4 +24,7 @@
 	<string name="command_videofeed_with_explanation">videofeed (IP Webcam用)</string>
 	
 	<string name="settings_done">完了</string>	
+	
+	<string name="title_disconnected">接続なし</string>
+	<string name="title_connecting">接続中&#8230;</string>
 </resources>

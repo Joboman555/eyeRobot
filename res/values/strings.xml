@@ -33,4 +33,7 @@
 	<string name="command_videofeed_with_explanation">videofeed (for IP Webcam)</string>
 	
 	<string name="settings_done">Done</string>
+	
+	<string name="title_disconnected">Disconnected</string>
+	<string name="title_connecting">Connecting&#8230;</string>
 </resources>

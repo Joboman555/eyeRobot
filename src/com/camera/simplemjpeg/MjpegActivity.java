@@ -79,6 +79,8 @@ public class MjpegActivity extends Activity {
         if(mv != null){
         	mv.setResolution(width, height);
         }
+        
+        setTitle(R.string.title_connecting);
         new DoRead().execute(URL);
     }
 
@@ -221,7 +223,12 @@ public class MjpegActivity extends Activity {
 
         protected void onPostExecute(MjpegInputStream result) {
             mv.setSource(result);
-            if(result!=null) result.setSkip(1);
+            if(result!=null){
+            	result.setSkip(1);
+            	setTitle(R.string.app_name);
+            }else{
+            	setTitle(R.string.title_disconnected);
+            }
             mv.setDisplayMode(MjpegView.SIZE_BEST_FIT);
             mv.showFps(false);
         }
