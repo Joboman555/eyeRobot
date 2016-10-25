@@ -27,14 +27,15 @@ public class MjpegActivity extends Activity {
     private static final boolean DEBUG = true;
     private static final String TAG = "MJPEG";
 
-    private MjpegView mv = null;
+    private MjpegView mv1 = null;
+    private MjpegView mv2 = null;
     String URL;
 
     // for settings (network and resolution)
     private static final int REQUEST_SETTINGS = 0;
 
-    private int width = 320;
-    private int height = 240;
+    private int width = 640;
+    private int height = 480;
 
     private int ip_ad1 = 192;
     private int ip_ad2 = 168;
@@ -49,6 +50,7 @@ public class MjpegActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Comment out the next two lines to debug.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -63,12 +65,17 @@ public class MjpegActivity extends Activity {
         ip_port = preferences.getInt("ip_port", ip_port);
         ip_command = preferences.getString("ip_command", ip_command);
 
-        URL = "http://10.27.68.129:8081/";
+        //URL = "http://10.27.68.129:8081/";
+        URL = "http://trackfield.webcam.oregonstate.edu/axis-cgi/mjpg/video.cgi?resolution=320x240&amp%3bdummy=1333689998337";
 
         setContentView(R.layout.main);
-        mv = (MjpegView) findViewById(R.id.mv);
-        if (mv != null) {
-            mv.setResolution(width, height);
+        mv1 = (MjpegView) findViewById(R.id.mv1);
+        mv2 = (MjpegView) findViewById(R.id.mv2);
+        if (mv1 != null) {
+            mv1.setResolution(width, height);
+        }
+        if (mv2 != null) {
+            mv2.setResolution(width, height);
         }
 
         setTitle(R.string.title_connecting);
@@ -79,7 +86,7 @@ public class MjpegActivity extends Activity {
     public void onResume() {
         if (DEBUG) Log.d(TAG, "onResume()");
         super.onResume();
-        if (mv != null) {
+        if (mv1 != null && mv2 != null) {
             if (suspending) {
                 new DoRead().execute(URL);
                 suspending = false;
@@ -96,9 +103,15 @@ public class MjpegActivity extends Activity {
     public void onPause() {
         if (DEBUG) Log.d(TAG, "onPause()");
         super.onPause();
-        if (mv != null) {
-            if (mv.isStreaming()) {
-                mv.stopPlayback();
+        if (mv1 != null) {
+            if (mv1.isStreaming()) {
+                mv1.stopPlayback();
+                suspending = true;
+            }
+        }
+        if (mv2 != null) {
+            if (mv2.isStreaming()) {
+                mv2.stopPlayback();
                 suspending = true;
             }
         }
@@ -112,8 +125,11 @@ public class MjpegActivity extends Activity {
     public void onDestroy() {
         if (DEBUG) Log.d(TAG, "onDestroy()");
 
-        if (mv != null) {
-            mv.freeCameraMemory();
+        if (mv1 != null) {
+            mv1.freeCameraMemory();
+        }
+        if (mv2 != null) {
+            mv2.freeCameraMemory();
         }
 
         super.onDestroy();
@@ -158,8 +174,11 @@ public class MjpegActivity extends Activity {
                     ip_port = data.getIntExtra("ip_port", ip_port);
                     ip_command = data.getStringExtra("ip_command");
 
-                    if (mv != null) {
-                        mv.setResolution(width, height);
+                    if (mv1 != null) {
+                        mv1.setResolution(width, height);
+                    }
+                    if (mv2 != null) {
+                        mv2.setResolution(width, height);
                     }
                     SharedPreferences preferences = getSharedPreferences("SAVED_VALUES", MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
@@ -225,15 +244,27 @@ public class MjpegActivity extends Activity {
         }
 
         protected void onPostExecute(MjpegInputStream result) {
-            mv.setSource(result);
+            if (mv1 != null) {
+                mv1.setSource(result);
+            }
+            if (mv2 != null) {
+                mv2.setSource(result);
+            }
             if (result != null) {
                 result.setSkip(1);
                 setTitle(R.string.app_name);
             } else {
                 setTitle(R.string.title_disconnected);
             }
-            mv.setDisplayMode(MjpegView.SIZE_BEST_FIT);
-            mv.showFps(false);
+            if (mv1 != null) {
+                mv1.setDisplayMode(MjpegView.SIZE_BEST_FIT);
+                mv1.showFps(false);
+            }
+            if (mv2 != null) {
+                mv2.setDisplayMode(MjpegView.SIZE_BEST_FIT);
+                mv2.showFps(false);
+            }
+
         }
     }
 

@@ -51,8 +51,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
 
     // image size
 
-    public int IMG_WIDTH = 640;
-    public int IMG_HEIGHT = 480;
+    public int IMG_WIDTH = 320;
+    public int IMG_HEIGHT = 240;
 
     public class MjpegViewThread extends Thread {
         private SurfaceHolder mSurfaceHolder;
