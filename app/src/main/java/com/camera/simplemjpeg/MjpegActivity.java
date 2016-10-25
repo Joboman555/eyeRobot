@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -22,7 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 
 public class MjpegActivity extends Activity {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String TAG = "MJPEG";
 
     private MjpegView mv = null;
@@ -31,8 +33,8 @@ public class MjpegActivity extends Activity {
     // for settings (network and resolution)
     private static final int REQUEST_SETTINGS = 0;
 
-    private int width = 640;
-    private int height = 480;
+    private int width = 320;
+    private int height = 240;
 
     private int ip_ad1 = 192;
     private int ip_ad2 = 168;
@@ -47,6 +49,9 @@ public class MjpegActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         SharedPreferences preferences = getSharedPreferences("SAVED_VALUES", MODE_PRIVATE);
         width = preferences.getInt("width", width);
@@ -58,24 +63,7 @@ public class MjpegActivity extends Activity {
         ip_port = preferences.getInt("ip_port", ip_port);
         ip_command = preferences.getString("ip_command", ip_command);
 
-        StringBuilder sb = new StringBuilder();
-        String s_http = "http://";
-        String s_dot = ".";
-        String s_colon = ":";
-        String s_slash = "/";
-        sb.append(s_http);
-        sb.append(ip_ad1);
-        sb.append(s_dot);
-        sb.append(ip_ad2);
-        sb.append(s_dot);
-        sb.append(ip_ad3);
-        sb.append(s_dot);
-        sb.append(ip_ad4);
-        sb.append(s_colon);
-        sb.append(ip_port);
-        sb.append(s_slash);
-        sb.append(ip_command);
-        URL = new String(sb);
+        URL = "http://10.27.68.129:8081/";
 
         setContentView(R.layout.main);
         mv = (MjpegView) findViewById(R.id.mv);
