@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.camera.simplemjpeg"
-        minSdkVersion 8
+        minSdkVersion 19
         targetSdkVersion 22
     }
 
@@ -18,4 +18,15 @@ android {
     }
 
     sourceSets.main.jni.srcDirs = []
+}
+
+dependencies {
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+    compile project(':base')
+}
+
+repositories{
+    flatDir{
+        dirs 'libraries'
+    }
 }

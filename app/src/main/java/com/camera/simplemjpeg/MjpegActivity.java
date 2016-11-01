@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,7 +45,8 @@ public class MjpegActivity extends Activity {
     private int ip_port = 80;
     private String ip_command = "?action=stream";
 
-    private boolean suspending = false;
+    private boolean mv1_suspending = false;
+    private boolean mv2_suspending = false;
 
     final Handler handler = new Handler();
 
@@ -65,8 +67,8 @@ public class MjpegActivity extends Activity {
         ip_port = preferences.getInt("ip_port", ip_port);
         ip_command = preferences.getString("ip_command", ip_command);
 
-        //URL = "http://10.27.68.129:8081/";
-        URL = "http://trackfield.webcam.oregonstate.edu/axis-cgi/mjpg/video.cgi?resolution=320x240&amp%3bdummy=1333689998337";
+        URL = "http://10.27.27.129:8081/";
+        //URL = "http://trackfield.webcam.oregonstate.edu/axis-cgi/mjpg/video.cgi?resolution=320x240&amp%3bdummy=1333689998337";
 
         setContentView(R.layout.main);
         mv1 = (MjpegView) findViewById(R.id.mv1);
@@ -79,17 +81,24 @@ public class MjpegActivity extends Activity {
         }
 
         setTitle(R.string.title_connecting);
-        new DoRead().execute(URL);
+        new DoRead().execute(new Pair<String, MjpegView>(URL, mv1));
+        new DoRead().execute(new Pair<String, MjpegView>(URL, mv2));
     }
 
 
     public void onResume() {
         if (DEBUG) Log.d(TAG, "onResume()");
         super.onResume();
-        if (mv1 != null && mv2 != null) {
-            if (suspending) {
-                new DoRead().execute(URL);
-                suspending = false;
+        if (mv1 != null) {
+            if (mv1_suspending) {
+                new DoRead().execute(new Pair<String, MjpegView>(URL, mv1));
+                mv1_suspending = false;
+            }
+        }
+        if (mv2 != null) {
+            if (mv2_suspending) {
+                new DoRead().execute(new Pair<String, MjpegView>(URL, mv2));
+                mv2_suspending = false;
             }
         }
 
@@ -106,13 +115,13 @@ public class MjpegActivity extends Activity {
         if (mv1 != null) {
             if (mv1.isStreaming()) {
                 mv1.stopPlayback();
-                suspending = true;
+                mv1_suspending = true;
             }
         }
         if (mv2 != null) {
             if (mv2.isStreaming()) {
                 mv2.stopPlayback();
-                suspending = true;
+                mv2_suspending = true;
             }
         }
     }
@@ -209,8 +218,12 @@ public class MjpegActivity extends Activity {
         });
     }
 
-    public class DoRead extends AsyncTask<String, Void, MjpegInputStream> {
-        protected MjpegInputStream doInBackground(String... url) {
+    public class DoRead extends AsyncTask<Pair<String, MjpegView>, Void, MjpegInputStream> {
+            protected String url;
+            protected MjpegView mjpegview;
+        protected MjpegInputStream doInBackground(Pair<String, MjpegView>...pair) {
+            url = pair[0].first;
+            mjpegview = pair[0].second;
             //TODO: if camera has authentication deal with it and don't just not work
             HttpResponse res = null;
             DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -219,7 +232,7 @@ public class MjpegActivity extends Activity {
             HttpConnectionParams.setSoTimeout(httpParams, 5 * 1000);
             if (DEBUG) Log.d(TAG, "1. Sending http request");
             try {
-                res = httpclient.execute(new HttpGet(URI.create(url[0])));
+                res = httpclient.execute(new HttpGet(URI.create(url)));
                 if (DEBUG)
                     Log.d(TAG, "2. Request finished, status = " + res.getStatusLine().getStatusCode());
                 if (res.getStatusLine().getStatusCode() == 401) {
@@ -244,11 +257,8 @@ public class MjpegActivity extends Activity {
         }
 
         protected void onPostExecute(MjpegInputStream result) {
-            if (mv1 != null) {
-                mv1.setSource(result);
-            }
-            if (mv2 != null) {
-                mv2.setSource(result);
+            if (mjpegview!= null) {
+                mjpegview.setSource(result);
             }
             if (result != null) {
                 result.setSkip(1);
@@ -256,15 +266,10 @@ public class MjpegActivity extends Activity {
             } else {
                 setTitle(R.string.title_disconnected);
             }
-            if (mv1 != null) {
-                mv1.setDisplayMode(MjpegView.SIZE_BEST_FIT);
-                mv1.showFps(false);
+            if (mjpegview != null) {
+                mjpegview.setDisplayMode(MjpegView.SIZE_BEST_FIT);
+                mjpegview.showFps(true);
             }
-            if (mv2 != null) {
-                mv2.setDisplayMode(MjpegView.SIZE_BEST_FIT);
-                mv2.showFps(false);
-            }
-
         }
     }
 

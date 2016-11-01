@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\jspear\.gradle\caches\modules-2\files-2.1\com.google.protobuf.nano\protobuf-javanano\3.0.0-alpha-7\52587934797e3433992a9d69178a1471e4a8f85d\protobuf-javanano-3.0.0-alpha-7.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="22.0.1"
+        sha1="52587934797e3433992a9d69178a1471e4a8f85d">
+        <dex dex="C:\Users\jspear\simplemjpegview\app\build\intermediates\pre-dexed\debug\protobuf-javanano-3.0.0-alpha-7_ddf61be9e7d9f3ccbaf80a8e4b14447b438f1db3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\jspear\simplemjpegview\app\build\intermediates\exploded-aar\simplemjpegview\base\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="22.0.1"
+        sha1="938032470efa6ee5f87a14ec86f290316fa147e4">
+        <dex dex="C:\Users\jspear\simplemjpegview\app\build\intermediates\pre-dexed\debug\simplemjpegview-base-unspecified_b97bafde304f5d8f0cada45086dc0f02bd734b6c.jar" />
+    </item>
+
+</items>
